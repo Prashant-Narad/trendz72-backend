@@ -69,6 +69,29 @@ app.get('/videos', async (req, res) => {
   }
 });
 
+// ⏰ THE ALARM CLOCK FOR ROBOT (Naye videos aur notifications ke liye)
+const { exec } = require('child_process');
+
+function wakeUpRobot() {
+  console.log("⏰ Alarm bacha! Robot ko naye videos dhoondhne bhej raha hu...");
+  
+  // Yeh line cloud ke andar background mein 'fetcher.js' ko run karegi
+  exec('node fetcher.js', (error, stdout, stderr) => {
+    if (error) {
+      console.error(`❌ Robot Error: ${error.message}`);
+      return;
+    }
+    console.log(`🤖 Robot Report:\n${stdout}`);
+  });
+}
+
+// Har 1 Ghante (1 Hour) mein Robot apne aap chalega (1000ms * 60s * 60m)
+const ONE_HOUR = 1 * 60 * 60 * 1000;
+setInterval(wakeUpRobot, ONE_HOUR);
+
+// Optional: Agar aap chahte hain ki server start hote hi ek baar turant check kare
+wakeUpRobot();
+
 // ----------------------------------------------------
 // 4. SERVER START
 // ----------------------------------------------------
@@ -76,3 +99,4 @@ const PORT = 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server chalu ho gaya! Port: ${PORT}`);
 });
+
